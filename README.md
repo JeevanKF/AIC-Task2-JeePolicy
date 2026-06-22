@@ -12,8 +12,10 @@ The simulation uses a **Universal Robots UR5e** robotic arm equipped with a grip
 My implementation modifies the provided example policy by creating a custom **JeePolicy**, compiling it within the ROS 2 workspace, and successfully executing all evaluation trials in simulation. The robot autonomously detects the task, approaches the connector, aligns the cable with the target port, performs the insertion sequence, and completes the evaluation process.
 
 This repository also provides step-by-step setup instructions, build commands, execution workflow, troubleshooting tips, and demonstration videos to help others reproduce the simulation environment and run the project successfully.
+## II. MY Contribution
+Implemented and evaluated a custom ROS2 JeePolicy derived from the WaveArm baseline for autonomous cable insertion in the AI for Industry Challenge simulation
 
-## II. Visual
+## III. Visual
 
 ### Simulation Screenshots
 #### i. RViz Environment Overview
@@ -46,7 +48,7 @@ Google Drive Link : https://drive.google.com/file/d/1M7GOsXf-dXWqmTebBc1-VNFh9Nu
 https://github.com/user-attachments/assets/f1dcc82c-1766-4cc4-9bbb-56e5b271ea6a
 Shows the UR5e robot performing the cable insertion task inside the Gazebo simulation.
 
-## III. System Requirements
+## IV. System Requirements
 
 Ubuntu 24.04,
 Docker,
@@ -54,7 +56,7 @@ ROS2 Kilted,
 Pixi,
 Git.
 
-## IV. Installation & Running the Simulation
+## V. Installation & Running the Simulation
 
 #### 1. Clone the Repository
 
@@ -210,12 +212,12 @@ docker restart aic_eval
 4. Repeat the Terminal 1 → Terminal 3 steps above.
 
 
-## V. Run Zenoh
+## VI. Run Zenoh
 ```
 ~/aic_results/
 ros2 run rmw_zenoh_cpp rmw_zenohd
 ```
-## VI. Launch Gazebo Simulation
+## VII. Launch Gazebo Simulation
 
 Open a **new terminal** and enter the Docker container:
 
@@ -247,7 +249,7 @@ start_aic_engine:=true
 
 After a few seconds, Gazebo will open automatically. The simulation environment, robot, cable, and task board will be spawned, and the evaluation engine will begin preparing the task.
 
-## VII. Run the Custom JeePolicy
+## VIII. Run the Custom JeePolicy
 This custom policy is based on the provided WaveArm baseline and was modified to improve cable alignment during insertion.
 
 Main features:
@@ -297,19 +299,20 @@ The final evaluation score and ROS bag recordings will be saved in:
 ```
 
 
-## VIII. Expected Result
+## IX. Expected Workflow
 
- Show Robot
-    →
-  moves
-    →
-aligns cable
-    →
- plugs cable
-    →
-score printed
+1. Launch Gazebo simulation.
+2. Spawn the UR5e robot.
+3. Receive the cable insertion task.
+4. Execute the custom JeePolicy.
+5. Align the cable connector.
+6. Insert the cable.
+7. Complete evaluation.
+8. Save results to ~/aic_results.
+Robot -> moves -> aligns cable -> plugs cable
 
-## IX. Troubleshooting
+
+## X. Troubleshooting
 
 During the setup and execution of the AI for Industry Challenge environment, several common issues were encountered and resolved. The following solutions may help if you experience similar problems.
 
@@ -514,7 +517,7 @@ The evaluation summary and final score can be found in:
 ```text
 ~/aic_results/scoring.yaml
 ```
-## X. Results
+## XI. Results
 
 Trials Passed: 3 / 3
 Score: 136.24
@@ -535,7 +538,7 @@ Evaluation Summary
 |Trial 2	  | Success	   |Partial cable insertion               |
 |Trial 3	  | Completed  |Task executed with evaluation metrics |
 
-## XI. Future Improvements
+## XII. Future Improvements
 
 • Vision-based cable localization
 • Reinforcement Learning policy
@@ -543,7 +546,7 @@ Evaluation Summary
 • Force-feedback optimization
 • Improved trajectory planning
 
-## XII. References
+## XIII. References
 
 Intrinsic AI for Industry Challenge
 ROS2 Kilted Kaiju
