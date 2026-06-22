@@ -1,189 +1,546 @@
-# AI for Industry Challenge Toolkit
+# AI for Industry Challenge
+## Custom JeePolicy
 
-[![build](https://github.com/intrinsic-dev/aic/actions/workflows/build.yml/badge.svg)](https://github.com/intrinsic-dev/aic/actions/workflows/build.yml)
-[![style](https://github.com/intrinsic-dev/aic/actions/workflows/style.yml/badge.svg)](https://github.com/intrinsic-dev/aic/actions/workflows/style.yml)
+## I. About
 
-![](../media/aic_banner.png)
+This repository contains my implementation of a custom **JeePolicy** for the **AI for Industry Challenge (AIC)** robotics evaluation environment. The objective of this project is to autonomously control an industrial robotic arm to perform a cable insertion task using ROS 2 and computer-controlled motion planning.
 
-The **AI for Industry Challenge** is an open competition for developers and roboticists aimed at solving some of the hardest, high-impact problems in robotics and manufacturing.
+The project was developed as part of my Robotics Internship, where I learned to work with the complete AIC toolkit, configure the simulation environment, and implement a custom policy for robotic manipulation.
 
-This repository contains the official toolkit to help participants start developing their solutions. For registration details, official rules, and FAQs, please visit the [AI for Industry Challenge event page](https://www.intrinsic.ai/events/ai-for-industry-challenge).
+The simulation uses a **Universal Robots UR5e** robotic arm equipped with a gripper to insert an **SC cable connector** into its corresponding port on a simulated task board. The environment is powered by **Gazebo Harmonic**, while the robot software is built on **ROS 2 Kilted Kaiju**, Docker, and the AIC evaluation framework.
 
----
+My implementation modifies the provided example policy by creating a custom **JeePolicy**, compiling it within the ROS 2 workspace, and successfully executing all evaluation trials in simulation. The robot autonomously detects the task, approaches the connector, aligns the cable with the target port, performs the insertion sequence, and completes the evaluation process.
 
-## Toolkit Guide
+This repository also provides step-by-step setup instructions, build commands, execution workflow, troubleshooting tips, and demonstration videos to help others reproduce the simulation environment and run the project successfully.
 
-Welcome to the AIC toolkit documentation. This guide walks you through the complete workflow for participating in the challenge — from understanding the requirements to submitting your solution.
+## II. Visual
 
-Follow the sections below to navigate through each phase of the process.
+### Simulation Screenshots
+#### i. RViz Environment Overview
 
-1. **📖 Understand the Challenge**
-   - Read the [Challenge Overview](./docs/overview.md) to understand the goals.
-   - Review the [Qualification Phase](./docs/phases.md#qualification-phase-train-your-model) to understand what you'll be building.
-   - Review the [Scoring Guide](./docs/scoring.md) to understand how you'll be scored.
+<img width="1280" height="720" alt="env" src="https://github.com/user-attachments/assets/e7c99b55-2eef-4743-9c13-7bfd783e1adf" />
+The RViz environment displaying the UR5e robotic manipulator, TF coordinate frames, cable model, and task board used during the cable insertion challenge.
 
-2. **🔧 Set Up Your Environment**
-   - Follow the [Getting Started](./docs/getting_started.md) guide to set up and validate your development environment.
-   - Run the evaluation container and set up your local workspace with Pixi.
+#### ii. Camera View of the Task Board
 
-3. **💻 Develop Your Policy**
-   - Explore the [Scene Description](./docs/scene_description.md) to learn how to customize and explore the environment.
-   - Review [AIC Interfaces](./docs/aic_interfaces.md) to understand available interfaces to communicate with sensors and actuators.
-   - Consult [AIC Controller](./docs/aic_controller.md) to learn about controlling the robot.
-   - Consult the [Challenge Rules](./docs/challenge_rules.md) to ensure compliance.
-   - Start with the [Policy Integration Guide](./docs/policy.md) to implement your solution.
-   - See [Participant Utilities](./docs/participant_utilities.md) for a list of helpful tools.
+<img width="1280" height="720" alt="port" src="https://github.com/user-attachments/assets/2d709c55-380d-4ca9-b994-791278521ed8" />
+RGB camera view showing the simulated cable connector and target insertion port used by the robot during execution.
 
-4. **🧪 Test Your Solution**
-   - Use the provided simulation environment to test your policy.
-   - Run `aic_engine` with the `sample_config` in [`aic_engine/config/`](./aic_engine/config/) to test different scenarios. For more information on running the `aic_engine` with different configs, see the [aic_engine README file](./aic_engine/README.md).
-   - Create your own test scenarios by following the configuration example in [`aic_engine/config/`](./aic_engine/config/) to run with `aic_engine`.
-   - Refer to [Troubleshooting](./docs/troubleshooting.md) if you encounter issues.
+#### iii. Robot Arm Overview
 
-5. **📦 Submit Your Entry**
-   - Package your solution following the [Submission Guidelines](./docs/submission.md).
-   - Test your container locally before submitting following [these instructions](./docs/submission.md#verify-locally).
-   - Submit through the official portal following [these instructions](./docs/submission.md#2-upload-your-image-to-our-registry).
+<img width="1280" height="720" alt="arm (1)" src="https://github.com/user-attachments/assets/263996b7-96c3-4ea2-bd99-2393e19fa091" />
+The UR5e robotic manipulator initialized in the RViz environment. This view displays the robot model together with the ROS2 TF coordinate frames used for pose estimation and motion planning.
 
----
+#### iv. Cable Insertion Process
 
-## Toolkit Architecture
+<img width="1280" height="720" alt="arm2" src="https://github.com/user-attachments/assets/43a946a5-606c-431f-864e-13ee1a9318e8" />
+The UR5e robot executing the custom JeePolicy while aligning the cable connector and performing the insertion task inside the simulated environment.
 
-![AIC Competition Components](../media/aic_competition_components.png)
+### Demonstration Video
+The complete simulation, including Gazebo, RViz visualization, robot motion, and successful cable insertion using the custom JeePolicy, is available below.
 
-The AI for Industry Challenge toolkit is divided into **two main components**:
+Google Drive Link : https://drive.google.com/file/d/1M7GOsXf-dXWqmTebBc1-VNFh9Nu3xIQS/view?usp=drive_link
 
-### 1. Evaluation Component (Provided - Run by Organizers)
+## III. System Requirements
 
-This component provides the complete evaluation infrastructure:
-- **`aic_engine`** - Orchestrates trials and computes scores.
-- **`aic_bringup`** - Launches simulation environment (Gazebo, robot, sensors).
-- **`aic_controller`** - Low-level robot control with force management.
-- **`aic_adapter`** - Sensor fusion and data synchronization.
+Ubuntu 24.04,
+Docker,
+ROS2 Kilted,
+Pixi,
+Git.
 
-**What you receive:** Standard ROS sensor topics providing camera images, joint states, force/torque measurements, and TF frames.
+## IV. Installation & Running the Simulation
 
-### 2. Participant Model Component (Your Implementation - What You Submit)
+#### 1. Clone the Repository
 
-This is what you develop and submit:
-- **A ROS 2 node** that follows the behavioral requirements defined in [Challenge Rules](./docs/challenge_rules.md).
-- **Your custom logic** - Code to process sensor data and command the robot to insert cables.
-
-**What you provide:** A container with a ROS 2 Lifecycle node named `aic_model` that responds to the `/insert_cable` action and outputs robot motion commands via standard ROS topics/services.
-
-**Convenient Entry Point:** We provide an `aic_model` framework that handles all the ROS 2 boilerplate and lifecycle management. You simply implement a Python policy class that gets dynamically loaded at runtime. See the [Policy Integration Guide](./docs/policy.md) for details.
-
-### Development and Submission Workflow
-
-> [!IMPORTANT]
-> **ROS 2 Distribution:** The official evaluation of all submissions will be conducted using **ROS 2 Kilted Kaiju**. If you choose to develop or test your policy using a different ROS 2 distribution (e.g., Humble or Jazzy), it is entirely your responsibility to ensure compatibility and support. Please note that **inter-distro communication is not guaranteed and not officially supported**.
-
-**Development Options:**
-- Develop inside a container (recommended - matches evaluation environment).
-- OR develop in native Ubuntu 24.04 environment (requires all dependencies).
-
-**Submission Requirements:**
-- Package your solution using the provided `aic_model` Dockerfile.
-- Submit your container - it must respond to standard ROS inputs and command the robot to insert cables.
-- Your container interfaces with the evaluation component via ROS topics.
-
----
-## Repository Structure
-
+```bash
+git clone https://github.com/JeevanKF/AIC-Task2-JeePolicy.git
+cd AIC-Task2-JeePolicy
 ```
-aic/
-├── aic_adapter/          # Adapter for interfacing between model and controller
-├── aic_assets/           # 3D models and simulation assets
-├── aic_bringup/          # Launch files for starting the challenge environment
-├── aic_controller/       # Robot controller implementation
-├── aic_description/      # Robot and environment URDF/SDF descriptions
-├── aic_engine/           # Trial orchestration and validation engine
-├── aic_example_policies/ # Example policy implementations
-├── aic_gazebo/           # Gazebo-specific plugins and configurations
-├── aic_interfaces/       # ROS 2 message, service, and action definitions
-├── aic_model/            # Template for participant policy implementation
-├── aic_scoring/          # Scoring system implementation
-├── aic_utils/            # Utility packages and tools
-├── docker/               # Docker container definitions
-└── docs/                 # Comprehensive documentation
+#### 2. Start the Docker Container
+
+```bash
+docker start aic_eval
+```
+Verify that the container is running:
+
+```bash
+docker ps
+```
+Expected output:
+```
+aic_eval
+```
+#### 3. Open the Docker Container
+
+```bash
+docker exec -it aic_eval bash
+```
+#### 4. Go to the Workspace
+
+```bash
+cd /home/jee/ws_aic
 ```
 
----
+#### 5. Source ROS2 and Workspace
 
-## Key Packages for Participants
+```bash
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
+```
 
-### `aic_model` - Convenient Policy Framework (Recommended)
-This package provides a ready-to-use ROS 2 Lifecycle node that dynamically loads and executes your Python policy implementation. It handles all ROS 2 boilerplate, lifecycle management, and challenge rule compliance, allowing you to focus on implementing your policy logic.
-- **Location**: `aic_model/`.
-- **Documentation**: [Policy Integration Guide](./docs/policy.md).
-- **Tutorial**: [Creating a New Policy Node](./docs/policy.md#tutorial-creating-a-new-policy-node).
+#### 6. Build the Required Packages (First Time or After Modifications)
 
-> **Note:** While we recommend using this framework, you may implement your own ROS 2 node from scratch as long as it adheres to the [Challenge Rules](./docs/challenge_rules.md).
+Build the policy package:
 
-### `aic_interfaces` - Communication Protocols
-Defines all ROS 2 messages, services, and actions used in the challenge.
-- **Location**: `aic_interfaces/`.
-- **Documentation**: [AIC Interfaces](./docs/aic_interfaces.md).
+```bash
+colcon build --packages-select aic_example_policies
+```
 
-### `aic_example_policies` - Reference Implementations
-Example policies demonstrating different approaches and techniques.
-- **Location**: `aic_example_policies/`.
-- **README**: [aic_example_policies/README.md](./aic_example_policies/README.md).
+Build the model package:
 
-### `aic_bringup` - Launch the Environment
-Launch files to start the simulation, robot, and scoring systems.
-- **Location**: `aic_bringup/`.
-- **README**: [aic_bringup/README.md](./aic_bringup/README.md).
+```bash
+colcon build --packages-select aic_model
+```
 
-### `aic_engine` - Trial Orchestrator
-Manages trial execution, validates participant models, and collects scoring data.
-- **Location**: `aic_engine/`.
-- **README**: [aic_engine/README.md](./aic_engine/README.md).
+Reload the workspace:
 
----
+```bash
+source install/setup.bash
+```
 
-## Additional Documentation
+#### Running the Simulation
 
-### Challenge Information
+The simulation requires **three terminals**.
 
-* **[Challenge Overview](./docs/overview.md):** High-level summary of the competition goals and structure.
-* **[Competition Phases](./docs/phases.md):** Details on Qualification, Phase 1, and Phase 2.
-* **[Qualification Phase](./docs/qualification_phase.md):** Detailed technical overview of the qualification phase trials and scoring.
-* **[Challenge Rules](./docs/challenge_rules.md):** Required behavior for participant models.
-* **[Scoring](./docs/scoring.md):** Metrics and methods used to evaluate performance.
-* **[Scoring Test Examples](./docs/scoring_tests.md):** Reproducible examples exercising each scoring tier with exact commands.
+#### Terminal 1 — Zenoh Router
 
-### Technical Documentation
+```bash
+docker exec -it aic_eval bash
 
-* **[Getting Started](./docs/getting_started.md):** How to set up your local development environment.
-* **[Policy Integration](./docs/policy.md):** Guide to implementing your policy in the `aic_model` framework.
-* **[AIC Interfaces](./docs/aic_interfaces.md):** ROS 2 topics, services, and actions available to your policy.
-* **[AIC Controller](./docs/aic_controller.md):** Understanding the robot controller and motion commands.
-* **[Scene Description](./docs/scene_description.md):** Technical details of the simulation environment.
-* **[Task Board Description](./docs/task_board_description.md):** Physical layout and specifications of the task board.
-* **[Troubleshooting](./docs/troubleshooting.md):** Common issues and debugging strategies.
+cd /home/jee/ws_aic
 
-### Reference Materials
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
 
-* **[Glossary](./docs/glossary.md):** Terminology and definitions used throughout the AI for Industry Challenge
-
-### Submission
-
-* **[Submission Guidelines](./docs/submission.md):** How to package and submit your final model.
-
----
+ros2 run rmw_zenoh_cpp rmw_zenohd
+```
+Leave this terminal running.
 
 
-## Support and Resources
+#### Terminal 2 — JeePolicy
 
-- **Discussions**: Engage in conversations and ask questions about the challenge on [Open Robotics Discourse](https://discourse.openrobotics.org/c/competitions/ai-for-industry-challenge/). The community is encouraged to participate in discussions and assist each other.
-- **Issues**: Report any bugs or technical issues via [GitHub Issues](https://github.com/intrinsic-dev/aic/issues). Please refrain from using the Issue tracker for general questions about the challenge.
-  - **Note:**: Review the list of [known issues](https://github.com/intrinsic-dev/aic/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22known%20issue%22) and [bugs](https://github.com/intrinsic-dev/aic/issues?q=is%3Aissue%20state%3Aopen%20label%3Abug) before opening a new ticket.
-- **Event Page**: Visit the [AI for Industry Challenge](https://www.intrinsic.ai/events/ai-for-industry-challenge) for official updates.
+```bash
+docker exec -it aic_eval bash
 
----
+cd /home/jee/ws_aic
 
-## License
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
 
-This project is licensed under the Apache License 2.0 - see the individual package files for details.
-The [aic_isaac](./aic_utils/aic_isaac/) folder contains files licensed under BSD-3 - see [aic_isaac/LICENSE](./aic_utils/aic_isaac/LICENSE).
+ros2 run aic_model aic_model \
+  --ros-args \
+  -p use_sim_time:=true \
+  -p policy:=aic_example_policies.ros.JeePolicy
+```
+Leave this terminal running.
+
+
+#### Terminal 3 — Gazebo + Evaluation Engine
+
+```bash
+docker exec -it aic_eval bash
+
+cd /home/jee/ws_aic
+
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
+
+AIC_RESULTS_DIR=~/aic_results \
+ros2 launch aic_bringup aic_gz_bringup.launch.py \
+ground_truth:=true \
+start_aic_engine:=true
+```
+
+Gazebo will launch automatically.
+
+The robot will:
+
+* Spawn into the environment
+* Receive the cable insertion task
+* Execute JeePolicy
+* Insert the cable
+* Complete all evaluation trials
+* Save the results in:
+
+```
+~/aic_results/
+```
+#### Results
+
+The final evaluation score can be found in:
+
+```
+~/aic_results/scoring.yaml
+```
+
+The ROS bag recordings are stored in:
+
+```
+~/aic_results/
+```
+
+#### Restarting the Simulation
+
+After a completed run:
+
+1. Press **Ctrl+C** in all three terminals.
+2. Exit the Docker container if desired.
+3. Restart the container:
+
+```bash
+docker restart aic_eval
+```
+
+4. Repeat the Terminal 1 → Terminal 3 steps above.
+
+
+## V. Run Zenoh
+```
+~/aic_results/
+ros2 run rmw_zenoh_cpp rmw_zenohd
+```
+## VI. Launch Gazebo Simulation
+
+Open a **new terminal** and enter the Docker container:
+
+```bash
+docker exec -it aic_eval bash
+```
+
+Navigate to the workspace:
+
+```bash
+cd /home/jee/ws_aic
+```
+
+Source the ROS 2 environment and workspace:
+
+```bash
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
+```
+
+Launch the Gazebo simulation together with the AIC evaluation engine:
+
+```bash
+AIC_RESULTS_DIR=~/aic_results \
+ros2 launch aic_bringup aic_gz_bringup.launch.py \
+ground_truth:=true \
+start_aic_engine:=true
+```
+
+After a few seconds, Gazebo will open automatically. The simulation environment, robot, cable, and task board will be spawned, and the evaluation engine will begin preparing the task.
+
+## VII. Run the Custom JeePolicy
+This custom policy is based on the provided WaveArm baseline and was modified to improve cable alignment during insertion.
+
+Main features:
+
+TF-based pose estimation
+Quaternion interpolation (SLERP)
+XY error integration
+Smooth Cartesian interpolation
+Gradual Z-axis insertion
+Force-stable insertion
+Automatic task execution
+
+Open another terminal and enter the Docker container:
+
+```bash
+docker exec -it aic_eval bash
+```
+
+Navigate to the workspace:
+
+```bash
+cd /home/jee/ws_aic
+```
+
+Source the ROS 2 environment and workspace:
+
+```bash
+source /opt/ros/kilted/setup.bash
+source install/setup.bash
+```
+
+Start the custom JeePolicy node:
+
+```bash
+ros2 run aic_model aic_model \
+  --ros-args \
+  -p use_sim_time:=true \
+  -p policy:=aic_example_policies.ros.JeePolicy
+```
+
+Once the Gazebo simulation is running, the robot will receive the cable insertion task, execute the custom JeePolicy, align the connector with the target port, perform the insertion, and complete the evaluation automatically.
+
+The final evaluation score and ROS bag recordings will be saved in:
+
+```text
+~/aic_results/
+```
+
+
+## VIII. Expected Result
+
+ Show Robot
+    →
+  moves
+    →
+aligns cable
+    →
+ plugs cable
+    →
+score printed
+
+## IX. Troubleshooting
+
+During the setup and execution of the AI for Industry Challenge environment, several common issues were encountered and resolved. The following solutions may help if you experience similar problems.
+
+
+#### 1. `ros2: command not found`
+
+**Error**
+
+```bash
+ros2: command not found
+```
+
+**Solution**
+
+The ROS 2 environment was not sourced. Run:
+
+```bash
+source /opt/ros/kilted/setup.bash
+source /home/jee/ws_aic/install/setup.bash
+```
+
+#### 2. `Package 'aic_model' not found`
+
+**Error**
+
+```bash
+Package 'aic_model' not found
+```
+
+**Solution**
+
+Build the package and reload the workspace.
+
+```bash
+cd /home/jee/ws_aic
+
+colcon build --packages-select aic_model
+
+source install/setup.bash
+```
+
+#### 3. `No module named 'aic_example_policies'`
+
+**Error**
+
+```bash
+ModuleNotFoundError: No module named 'aic_example_policies'
+```
+
+**Solution**
+
+The custom policy package was not built.
+
+```bash
+colcon build --packages-select aic_example_policies
+
+source install/setup.bash
+```
+
+#### 4. Gazebo GUI does not open
+
+**Symptoms**
+
+* Gazebo starts but no GUI appears.
+* Terminal keeps running without displaying the simulation.
+
+**Solution**
+
+Allow Docker to access the X11 display.
+
+On the host machine:
+
+```bash
+xhost +SI:localuser:root
+```
+
+Inside Docker:
+
+```bash
+export DISPLAY=:1
+```
+
+Verify:
+
+```bash
+echo $DISPLAY
+```
+
+#### 5. Zenoh Router Error
+
+**Error**
+
+```bash
+Address already in use
+```
+
+**Cause**
+
+Another Zenoh router instance is already running.
+
+**Solution**
+
+Restart the Docker container or stop the existing Zenoh router before launching a new one.
+
+```bash
+docker restart aic_eval
+```
+
+
+#### 6. Docker Container Not Running
+
+**Error**
+
+```bash
+Error response from daemon:
+container is not running
+```
+
+**Solution**
+
+Start the container before entering it.
+
+```bash
+docker start aic_eval
+
+docker exec -it aic_eval bash
+```
+
+#### 7. Permission Denied while executing JeePolicy.py
+
+**Error**
+
+```bash
+Permission denied
+```
+
+**Cause**
+
+Python policy files should not be executed directly.
+
+**Solution**
+
+Run the policy using ROS 2.
+
+```bash
+ros2 run aic_model aic_model \
+  --ros-args \
+  -p use_sim_time:=true \
+  -p policy:=aic_example_policies.ros.JeePolicy
+```
+
+#### 8. Git "Dubious Ownership" Error
+
+**Error**
+
+```bash
+fatal: detected dubious ownership in repository
+```
+
+**Solution**
+
+Mark the repository as safe.
+
+```bash
+git config --global --add safe.directory /home/jee/ws_aic/src/aic
+```
+
+#### 9. Git Push Rejected
+
+**Error**
+
+```bash
+failed to push some refs
+```
+
+**Cause**
+
+The remote repository contains commits that are not available locally.
+
+**Solution**
+
+Pull the latest changes or push to a new repository if creating a personal implementation.
+
+#### 10. Simulation Completed Successfully
+
+A successful execution should produce:
+
+* Gazebo launches successfully.
+* UR5e robot appears in the simulation.
+* Robot receives the cable insertion task.
+* Custom JeePolicy executes automatically.
+* Cable insertion is completed.
+* Evaluation finishes successfully.
+* Results are saved in:
+
+```text
+~/aic_results/
+```
+
+The evaluation summary and final score can be found in:
+
+```text
+~/aic_results/scoring.yaml
+```
+## X. Results
+
+Trials Passed: 3 / 3
+Score: 136.24
+
+
+| Trial     | Status        |      Score |
+| --------- | ------------- | ---------: |
+| Trial 1   | Success       |      64.29 |
+| Trial 2   | Success       |      65.72 |
+| Trial 3   | Success       |       6.24 |
+| **Total** | **Completed** | **136.24** |
+
+Evaluation Summary
+
+| Trial	  | Status	   | Result                               |
+| -------- |  --------  |  ----------------------------------  |
+|Trial 1   | Success    |Partial cable insertion               |
+|Trial 2	  | Success	   |Partial cable insertion               |
+|Trial 3	  | Completed  |Task executed with evaluation metrics |
+
+## XI. Future Improvements
+
+• Vision-based cable localization
+• Reinforcement Learning policy
+• MuJoCo implementation
+• Force-feedback optimization
+• Improved trajectory planning
+
+## XII. References
+
+Intrinsic AI for Industry Challenge
+ROS2 Kilted Kaiju
+Gazebo Harmonic
+Docker
