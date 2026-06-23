@@ -49,11 +49,6 @@ The complete simulation, including Gazebo, RViz visualization, robot motion, and
 
 ▶ Click the image above to watch the full demonstration.
 
-### 1. Gazebo Simulation – Cable Insertion Demo
-
-https://github.com/user-attachments/assets/f1dcc82c-1766-4cc4-9bbb-56e5b271ea6a
-Shows the UR5e robot performing the cable insertion task inside the Gazebo simulation.
-
 ## IV. System Requirements
 
 Ubuntu 24.04,
