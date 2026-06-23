@@ -20,22 +20,26 @@ Implemented and evaluated a custom ROS2 JeePolicy derived from the WaveArm basel
 ### Simulation Screenshots
 #### i. RViz Environment Overview
 
-<img width="1280" height="720" alt="env" src="https://github.com/user-attachments/assets/e7c99b55-2eef-4743-9c13-7bfd783e1adf" />
+<img width="958" height="543" alt="Env" src="https://github.com/user-attachments/assets/9b53ac20-34e1-4c9d-8f13-0790b4a414ef" />
+
 The RViz environment displaying the UR5e robotic manipulator, TF coordinate frames, cable model, and task board used during the cable insertion challenge.
 
 #### ii. Camera View of the Task Board
 
-<img width="1280" height="720" alt="port" src="https://github.com/user-attachments/assets/2d709c55-380d-4ca9-b994-791278521ed8" />
+<img width="322" height="287" alt="Port" src="https://github.com/user-attachments/assets/a87d2328-464e-4d18-b42d-f8b636391742" />
+
 RGB camera view showing the simulated cable connector and target insertion port used by the robot during execution.
 
 #### iii. Robot Arm Overview
 
-<img width="1280" height="720" alt="arm (1)" src="https://github.com/user-attachments/assets/263996b7-96c3-4ea2-bd99-2393e19fa091" />
+<img width="742" height="522" alt="Riv Arm" src="https://github.com/user-attachments/assets/a71fdfed-30f4-4972-a830-3648e8974458" />
+
 The UR5e robotic manipulator initialized in the RViz environment. This view displays the robot model together with the ROS2 TF coordinate frames used for pose estimation and motion planning.
 
 #### iv. Cable Insertion Process
 
-<img width="1280" height="720" alt="arm2" src="https://github.com/user-attachments/assets/43a946a5-606c-431f-864e-13ee1a9318e8" />
+<img width="587" height="475" alt="Gazebo Arm" src="https://github.com/user-attachments/assets/b403b512-bae7-4b15-aa2a-3e5c9b450e25" />
+
 The UR5e robot executing the custom JeePolicy while aligning the cable connector and performing the insertion task inside the simulated environment.
 
 ### Demonstration Video
