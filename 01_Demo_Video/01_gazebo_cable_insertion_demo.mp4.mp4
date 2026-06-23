@@ -1,2 +1,0 @@
-## Gazebo Simulation – UR5e Robot Cable Insertion
-### This video demonstrates the UR5e robotic manipulator operating in the Gazebo simulation environment. The custom JeePolicy controls the robot as it approaches the target connector and performs the cable insertion task.
