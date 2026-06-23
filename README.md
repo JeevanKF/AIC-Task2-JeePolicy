@@ -41,7 +41,9 @@ The UR5e robot executing the custom JeePolicy while aligning the cable connector
 ### Demonstration Video
 The complete simulation, including Gazebo, RViz visualization, robot motion, and successful cable insertion using the custom JeePolicy, is available below.
 
-Google Drive Link : https://drive.google.com/file/d/1M7GOsXf-dXWqmTebBc1-VNFh9Nu3xIQS/view?usp=drive_link
+[![Watch the Demo](assets/demo_thumbnail.png)](https://youtu.be/qBZrdnfjYKI)
+
+▶ Click the image above to watch the full demonstration.
 
 ### 1. Gazebo Simulation – Cable Insertion Demo
 
